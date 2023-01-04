@@ -10,7 +10,7 @@ globalStyles()
 
 export default function App({
   Component,
-  pageProps: { session, ...pageProps }
+  pageProps: { session, ...pageProps },
 }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
@@ -20,7 +20,7 @@ export default function App({
             type: 'website',
             locale: 'pt_BR',
             url: 'https://exemplo.com.br',
-            siteName: 'ignite Call'
+            siteName: 'ignite Call',
           }}
         />
         <Component {...pageProps} />
