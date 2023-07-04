@@ -12,6 +12,13 @@ import { api } from '../../../../../lib/axios'
 import { useRouter } from 'next/router'
 import { useQuery } from '@tanstack/react-query'
 
+interface AvailabilityAPIResponse {
+  possibleTimes: number[]
+  blockedTimes: {
+    date: Date;
+}[]
+}
+
 interface Availability {
   possibleTimes: number[]
   availableTimes: number[]
@@ -47,8 +54,20 @@ export function CalendarStep({ onSelectDateTime }: CalendarStepProps) {
           date: selectedDateWithoutTime,
         },
       })
+      const {possibleTimes, blockedTimes } = response.data as AvailabilityAPIResponse;
+      const referenceDate = dayjs(String(selectedDateWithoutTime))
+      
+      const availableTimes = possibleTimes.filter((time) => {
+        const isTimeBlocked = blockedTimes.some(
+          (blockedTime) => new Date(blockedTime.date).getHours() === time,
+        )
+    
+        const isTimeInPast = referenceDate.set('hour', time).isBefore(new Date())
+    
+        return !isTimeBlocked && !isTimeInPast
+      })
 
-      return response.data
+      return { possibleTimes, availableTimes }
     },
     {
       enabled: !!selectedDate,
